@@ -1,0 +1,26 @@
+<table mat-table [dataSource]="data" class="mat-elevation-z8">
+
+  @for (col of displayedColumns; track col.columnDef) {
+    <ng-container [matColumnDef]="col.columnDef">
+      <th mat-header-cell *matHeaderCellDef>{{ col.header }}</th>
+
+      <td mat-cell *matCellDef="let element">
+        @if (col.columnDef === 'acciones') {
+          @for (icon of col.icons ?? []; track icon.action) {
+            <button
+              mat-icon-button
+              [matTooltip]="icon.tooltip ?? icon.action"
+              (click)="onIconClick(icon.action, element)">
+              <mat-icon>{{ icon.name }}</mat-icon>
+            </button>
+          }
+        } @else {
+          {{ element[col.columnDef] }}
+        }
+      </td>
+    </ng-container>
+  }
+
+  <tr mat-header-row *matHeaderRowDef="columnKeys"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnKeys"></tr>
+</table>
