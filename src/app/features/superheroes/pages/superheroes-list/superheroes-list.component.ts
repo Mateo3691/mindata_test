@@ -41,7 +41,7 @@ export class SuperheroesListComponent {
     },
   ];
 
-  constructor( private dialog: MatDialog) {
+  constructor(private dialog: MatDialog) {
   }
 
   delete(hero: Superheroe): void {

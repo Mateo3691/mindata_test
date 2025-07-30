@@ -2,12 +2,11 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, Simpl
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Superheroe } from '../../../core/models/superheroe.model';
 import { Column } from '../../../core/models/columns.model';
-import { MOCK_SUPERHEROES } from '../../../core/mocks/superheroes-mock';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatFormField, MatFormFieldControl, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
@@ -19,6 +18,8 @@ import { MatInputModule } from '@angular/material/input';
 export class DynamicTableComponent implements AfterViewInit, OnChanges {
   @Input() data: Superheroe[] = [];
   @Input() displayedColumns: Column[] = [];
+  @Input() showFilter: boolean = false;
+  @Input() showPagination: boolean = false;
 
   @Output() iconClick: EventEmitter<any> = new EventEmitter();
   @Output() createClicked = new EventEmitter<void>();

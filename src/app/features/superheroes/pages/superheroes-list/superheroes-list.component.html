@@ -4,6 +4,8 @@
       <app-dynamic-table
         [data]="heroes()"
         [displayedColumns]="displayedColumns"
+        [showFilter]="true"
+        [showPagination]="true"
         (iconClick)="onIconClick($event)"
         (createClicked)="openDialogToCreate()"
         (filterChanged)="filter.set($event)"
