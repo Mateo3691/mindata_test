@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { Superheroe } from '../../../core/models/superheroe.model';
 import { Column } from '../../../core/models/columns.model';
@@ -14,8 +14,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './dynamic-table.component.scss',
 })
 export class DynamicTableComponent {
-  data: Superheroe[] = [...MOCK_SUPERHEROES];
-  displayedColumns: Column[] = [
+  @Input() data: Superheroe[] = [...MOCK_SUPERHEROES];
+  @Input() displayedColumns: Column[] = [
     { columnDef: 'id', header: 'ID' },
     { columnDef: 'nombre', header: 'Nombre' },
     { columnDef: 'poder', header: 'Poder' },
@@ -30,13 +30,13 @@ export class DynamicTableComponent {
     },
   ];
 
-  columnKeys = this.displayedColumns.map((col) => col.columnDef);
+  @Output() iconClick: EventEmitter<any> = new EventEmitter();
 
-  onActionClick(element: any): void {
-    console.log('Acción realizada en el elemento:', element);
+  get columnKeys(): string[] {
+    return this.displayedColumns.map((col) => col.columnDef);
   }
 
   onIconClick(action: string, element: any): void {
-    console.log(`Icono ${action} clicado en el elemento:`, element);
+    this.iconClick.emit({ action, element });
   }
 }

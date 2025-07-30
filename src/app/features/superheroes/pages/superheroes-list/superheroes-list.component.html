@@ -1,1 +1,7 @@
-<app-dynamic-table />
+<div class="superheroes-list">
+  <mat-card appearance="outlined">
+    <mat-card-content>
+        <app-dynamic-table (iconClick)="onIconClick($event)" />
+    </mat-card-content>
+  </mat-card>
+</div>

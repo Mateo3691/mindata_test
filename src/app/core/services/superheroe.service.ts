@@ -3,7 +3,7 @@ import { Superheroe } from '../models/superheroe.model';
 import { MOCK_SUPERHEROES } from '../mocks/superheroes-mock';
 
 @Injectable({ providedIn: 'root' })
-export class SuperheroService {
+export class SuperheroeService {
   private idCounter = 1;
   private _heroes = signal<Superheroe[]>([...MOCK_SUPERHEROES]);
 
