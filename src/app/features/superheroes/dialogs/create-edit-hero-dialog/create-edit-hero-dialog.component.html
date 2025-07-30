@@ -3,7 +3,7 @@
 <form [formGroup]="form" class="w-100" (ngSubmit)="save()" mat-dialog-content  >
   <mat-form-field appearance="fill" class="w-100">
     <mat-label>Nombre</mat-label>
-    <input matInput formControlName="nombre" required />
+    <input matInput appUppercase formControlName="nombre" required />
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="w-100">

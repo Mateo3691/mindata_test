@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { UppercaseDirective } from '../../../../shared/directives/uppercase.directive';
 
 @Component({
   selector: 'app-create-edit-hero-dialog',
@@ -16,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    UppercaseDirective
   ],
   templateUrl: './create-edit-hero-dialog.component.html',
   styleUrl: './create-edit-hero-dialog.component.scss'
