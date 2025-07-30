@@ -14,21 +14,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './dynamic-table.component.scss',
 })
 export class DynamicTableComponent {
-  @Input() data: Superheroe[] = [...MOCK_SUPERHEROES];
-  @Input() displayedColumns: Column[] = [
-    { columnDef: 'id', header: 'ID' },
-    { columnDef: 'nombre', header: 'Nombre' },
-    { columnDef: 'poder', header: 'Poder' },
-    { columnDef: 'origen', header: 'Origen' },
-    {
-      columnDef: 'acciones',
-      header: 'Acciones',
-      icons: [
-        { name: 'edit', action: 'editar', tooltip: 'Editar héroe' },
-        { name: 'delete', action: 'eliminar', tooltip: 'Eliminar héroe' },
-      ],
-    },
-  ];
+  @Input() data: Superheroe[] = [];
+  @Input() displayedColumns: Column[] = [];
 
   @Output() iconClick: EventEmitter<any> = new EventEmitter();
 

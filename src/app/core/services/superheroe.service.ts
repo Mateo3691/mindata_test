@@ -4,13 +4,12 @@ import { MOCK_SUPERHEROES } from '../mocks/superheroes-mock';
 
 @Injectable({ providedIn: 'root' })
 export class SuperheroeService {
-  private idCounter = 1;
   private _heroes = signal<Superheroe[]>([...MOCK_SUPERHEROES]);
 
   heroes = computed(() => this._heroes());
 
   add(hero: Omit<Superheroe, 'id'>) {
-    this._heroes.update(list => [...list, { ...hero, id: this.idCounter++ }]);
+    this._heroes.update(list => [...list, { ...hero, id: list.length + 1 }]);
   }
 
   update(updated: Superheroe) {
