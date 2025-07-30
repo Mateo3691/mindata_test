@@ -1,35 +1,12 @@
 <div class="superheroes-list">
-  <div class="d-flex justify-content-between mb-2">
-    <mat-form-field appearance="outline" class="w-50">
-      <mat-label>Buscar superhéroe</mat-label>
-      <input
-        matInput
-        type="text"
-        placeholder="Ej. Batman"
-        [value]="filter()"
-        (input)="filter.set($any($event.target).value)"
-      />
-      @if(filter()) {
-        <button
-        matSuffix
-        mat-icon-button
-        (click)="filter.set('')"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      }
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="openDialogToCreate()">
-      <mat-icon>add</mat-icon>
-      Nuevo superhéroe
-    </button>
-  </div>
   <mat-card appearance="outlined">
     <mat-card-content>
       <app-dynamic-table
         [data]="heroes()"
         [displayedColumns]="displayedColumns"
         (iconClick)="onIconClick($event)"
+        (createClicked)="openDialogToCreate()"
+        (filterChanged)="filter.set($event)"
       />
     </mat-card-content>
   </mat-card>
