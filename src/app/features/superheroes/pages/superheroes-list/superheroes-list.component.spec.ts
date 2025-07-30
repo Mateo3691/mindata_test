@@ -1,87 +1,114 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { SuperheroesListComponent } from './superheroes-list.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SuperheroeService } from '../../../../core/services/superheroe.service';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { signal } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Superheroe } from '../../../../core/models/superheroe.model';
+import { DynamicTableComponent } from '../../../../shared/components/dynamic-table/dynamic-table.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { of } from 'rxjs';
 
 describe('SuperheroesListComponent', () => {
   let component: SuperheroesListComponent;
   let fixture: ComponentFixture<SuperheroesListComponent>;
-  let dialogSpy: jasmine.SpyObj<MatDialog>;
-  let serviceSpy: jasmine.SpyObj<SuperheroeService>;
+  let superheroeService: jasmine.SpyObj<SuperheroeService>;
+  let matDialog: jasmine.SpyObj<MatDialog>;
 
-  const mockHero: Superheroe = {
-    id: 1,
-    nombre: 'Batman',
-    poder: 'Dinero',
-    origen: 'Gotham'
-  };
+  const mockHeroes: Superheroe[] = [
+    { id: 1, nombre: 'Batman', poder: 'Dinero', origen: 'Gotham' },
+    { id: 2, nombre: 'Superman', poder: 'Super fuerza', origen: 'Krypton' }
+  ];
 
   beforeEach(async () => {
-    dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    serviceSpy = jasmine.createSpyObj('SuperheroeService', ['add', 'update', 'delete', 'searchByName', 'heroes'], {
-      heroes: () => [mockHero]
-    });
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    const serviceSpy = jasmine.createSpyObj(
+      'SuperheroeService',
+      ['searchByName', 'delete', 'update', 'add'],
+      { heroes: signal(mockHeroes) }
+    );
 
     await TestBed.configureTestingModule({
-      imports: [MatDialogModule],
-      declarations: [SuperheroesListComponent],
-      providers: [
-        { provide: MatDialog, useValue: dialogSpy },
-        { provide: SuperheroeService, useValue: serviceSpy }
+      imports: [
+        SuperheroesListComponent,
+        MatDialogModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        MatFormFieldModule,
+        DynamicTableComponent,
+        NoopAnimationsModule
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      providers: [
+        { provide: SuperheroeService, useValue: serviceSpy },
+        { provide: MatDialog, useValue: dialogSpy }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SuperheroesListComponent);
     component = fixture.componentInstance;
+    superheroeService = TestBed.inject(SuperheroeService) as jasmine.SpyObj<SuperheroeService>;
+    matDialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+
     fixture.detectChanges();
   });
 
-  it('debería crearse correctamente', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería abrir el diálogo de creación y llamar a add si hay resultado', () => {
-    const result = { nombre: 'Nuevo Héroe', poder: 'Velocidad', origen: 'Tierra' };
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(result) } as any);
-    component.openDialogToCreate();
-    expect(dialogSpy.open).toHaveBeenCalled();
-    expect(serviceSpy.add).toHaveBeenCalledWith(result);
-  });
-
-  it('debería abrir el diálogo de edición y llamar a update si hay resultado', () => {
-    const updatedHero = { ...mockHero, nombre: 'Batman Updated' };
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(updatedHero) } as any);
-    component.openDialogToEdit(mockHero);
-    expect(dialogSpy.open).toHaveBeenCalled();
-    expect(serviceSpy.update).toHaveBeenCalledWith(updatedHero);
-  });
-
-  it('debería abrir el diálogo de confirmación y llamar a delete si se confirma', () => {
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
-    component.delete(mockHero);
-    expect(dialogSpy.open).toHaveBeenCalled();
-    expect(serviceSpy.delete).toHaveBeenCalledWith(mockHero.id);
-  });
-
-  it('debería reaccionar a iconClick con acción editar', () => {
-    spyOn(component, 'openDialogToEdit');
-    component.onIconClick({ action: 'editar', element: mockHero });
-    expect(component.openDialogToEdit).toHaveBeenCalledWith(mockHero);
-  });
-
-  it('debería reaccionar a iconClick con acción eliminar', () => {
-    spyOn(component, 'delete');
-    component.onIconClick({ action: 'eliminar', element: mockHero });
-    expect(component.delete).toHaveBeenCalledWith(mockHero);
-  });
-
-  it('debería actualizar el filtro', () => {
+  it('debería filtrar héroes por nombre', () => {
+    superheroeService.searchByName.and.returnValue([mockHeroes[0]]);
     component.filter.set('batman');
-    expect(component.filter()).toBe('batman');
+
+    const filtered = component.heroes();
+    expect(filtered.length).toBe(1);
+    expect(filtered[0].nombre).toBe('Batman');
   });
+
+  it('debería abrir diálogo para eliminar y llamar delete en servicio si se confirma', fakeAsync(() => {
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(true)
+    } as any);
+
+    const hero = mockHeroes[0];
+    component.delete(hero);
+
+    tick();
+    expect(matDialog.open).toHaveBeenCalled();
+    expect(superheroeService.delete).toHaveBeenCalledWith(hero.id);
+  }));
+
+  it('debería abrir diálogo para editar y llamar update si se devuelve un héroe', fakeAsync(() => {
+    const editedHero: Superheroe = { id: 1, nombre: 'Batman', poder: 'Tecnología', origen: 'Gotham' };
+
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(editedHero)
+    } as any);
+
+    component.openDialogToEdit(editedHero);
+
+    tick();
+    expect(matDialog.open).toHaveBeenCalled();
+    expect(superheroeService.update).toHaveBeenCalledWith(editedHero);
+  }));
+
+  it('debería abrir diálogo para crear y llamar add si se devuelve un héroe', fakeAsync(() => {
+    const newHero: Omit<Superheroe, 'id'> = { nombre: 'Flash', poder: 'Velocidad', origen: 'Central City' };
+
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(newHero)
+    } as any);
+
+    component.openDialogToCreate();
+
+    tick();
+    expect(matDialog.open).toHaveBeenCalled();
+    expect(superheroeService.add).toHaveBeenCalledWith(newHero);
+  }));
 });
