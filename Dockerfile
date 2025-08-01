@@ -20,7 +20,7 @@ FROM nginx:1.25-alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copia la build al directorio del servidor
-COPY --from=build /app/dist/mindata_test /usr/share/nginx/html
+COPY --from=build /app/dist/mindata_test/browser /usr/share/nginx/html
 
 # Copia archivo custom de configuración de nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
