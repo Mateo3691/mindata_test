@@ -1,14 +1,14 @@
 /* istanbul ignore file */
-import { AfterViewInit, Component, OnChanges, SimpleChanges, ViewChild, computed, effect, input, output } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Superheroe } from '../../../core/models/superheroe.model';
-import { Column } from '../../../core/models/columns.model';
+import { AfterViewInit, Component, ViewChild, computed, effect, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Column } from '../../../core/models/columns.model';
+import { Superheroe } from '../../../core/models/superheroe.model';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -27,7 +27,6 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './dynamic-table.component.scss',
 })
 export class DynamicTableComponent implements AfterViewInit {
-  // Inputs y Outputs modernos
   data = input<Superheroe[]>([]);
   displayedColumns = input<Column[]>([]);
   showFilter = input<boolean>(false);
