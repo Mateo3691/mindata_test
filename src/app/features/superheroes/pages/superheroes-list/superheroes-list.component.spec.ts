@@ -62,53 +62,99 @@ describe('SuperheroesListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('debería mostrar todos los héroes si el filtro está vacío', () => {
+    component.filter.set('');
+    const result = component.heroes();
+    expect(result.length).toBe(2);
+  });
+
   it('debería filtrar héroes por nombre', () => {
     superheroeService.searchByName.and.returnValue([mockHeroes[0]]);
     component.filter.set('batman');
-
     const filtered = component.heroes();
     expect(filtered.length).toBe(1);
     expect(filtered[0].nombre).toBe('Batman');
   });
 
-  it('debería abrir diálogo para eliminar y llamar delete en servicio si se confirma', fakeAsync(() => {
+  it('no debería eliminar si el diálogo devuelve false', fakeAsync(() => {
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(false)
+    } as any);
+
+    component.delete(mockHeroes[0]);
+    tick();
+
+    expect(matDialog.open).toHaveBeenCalled();
+    expect(superheroeService.delete).not.toHaveBeenCalled();
+  }));
+
+  it('debería eliminar si el diálogo devuelve true', fakeAsync(() => {
     matDialog.open.and.returnValue({
       afterClosed: () => of(true)
     } as any);
 
-    const hero = mockHeroes[0];
-    component.delete(hero);
-
+    component.delete(mockHeroes[0]);
     tick();
-    expect(matDialog.open).toHaveBeenCalled();
-    expect(superheroeService.delete).toHaveBeenCalledWith(hero.id);
+
+    expect(superheroeService.delete).toHaveBeenCalledWith(mockHeroes[0].id);
   }));
 
   it('debería abrir diálogo para editar y llamar update si se devuelve un héroe', fakeAsync(() => {
-    const editedHero: Superheroe = { id: 1, nombre: 'Batman', poder: 'Tecnología', origen: 'Gotham' };
-
+    const updatedHero = { ...mockHeroes[0], poder: 'Tecnología' };
     matDialog.open.and.returnValue({
-      afterClosed: () => of(editedHero)
+      afterClosed: () => of(updatedHero)
     } as any);
 
-    component.openDialogToEdit(editedHero);
-
+    component.openDialogToEdit(updatedHero);
     tick();
+
     expect(matDialog.open).toHaveBeenCalled();
-    expect(superheroeService.update).toHaveBeenCalledWith(editedHero);
+    expect(superheroeService.update).toHaveBeenCalledWith(updatedHero);
   }));
 
-  it('debería abrir diálogo para crear y llamar add si se devuelve un héroe', fakeAsync(() => {
-    const newHero: Omit<Superheroe, 'id'> = { nombre: 'Flash', poder: 'Velocidad', origen: 'Central City' };
+  it('no debería llamar update si se cancela el diálogo de edición', fakeAsync(() => {
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(null)
+    } as any);
 
+    component.openDialogToEdit(mockHeroes[0]);
+    tick();
+
+    expect(superheroeService.update).not.toHaveBeenCalled();
+  }));
+
+  it('debería abrir diálogo para crear y llamar add si se devuelve un nuevo héroe', fakeAsync(() => {
+    const newHero = { nombre: 'Flash', poder: 'Velocidad', origen: 'Central City' };
     matDialog.open.and.returnValue({
       afterClosed: () => of(newHero)
     } as any);
 
     component.openDialogToCreate();
-
     tick();
-    expect(matDialog.open).toHaveBeenCalled();
+
     expect(superheroeService.add).toHaveBeenCalledWith(newHero);
+  }));
+
+  it('no debería llamar add si se cancela el diálogo de creación', fakeAsync(() => {
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(null)
+    } as any);
+
+    component.openDialogToCreate();
+    tick();
+
+    expect(superheroeService.add).not.toHaveBeenCalled();
+  }));
+
+  it('debería manejar eventos del icono y delegar según el tipo de acción', fakeAsync(() => {
+    const hero = mockHeroes[0];
+    const editSpy = spyOn(component, 'openDialogToEdit');
+    const deleteSpy = spyOn(component, 'delete');
+
+    component.onIconClick({ action: 'editar', element: hero });
+    expect(editSpy).toHaveBeenCalledWith(hero);
+
+    component.onIconClick({ action: 'eliminar', element: hero });
+    expect(deleteSpy).toHaveBeenCalledWith(hero);
   }));
 });

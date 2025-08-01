@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })

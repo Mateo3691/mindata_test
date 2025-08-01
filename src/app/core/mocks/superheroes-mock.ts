@@ -1,4 +1,4 @@
-// core/mocks/mock-superheroes.ts
+/* istanbul ignore file */
 import { Superheroe } from '../models/superheroe.model';
 
 export const MOCK_SUPERHEROES: Superheroe[] = [

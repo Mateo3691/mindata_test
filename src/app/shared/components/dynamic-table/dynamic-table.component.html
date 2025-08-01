@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between mb-3">
-  @if(showFilter){
+  @if(showFilter()){
   <mat-form-field appearance="outline" class="w-50">
     <mat-label>Buscar</mat-label>
     <input
@@ -17,7 +17,7 @@
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  @for (col of displayedColumns; track col.columnDef) {
+  @for (col of displayedColumns(); track col.columnDef) {
   <ng-container [matColumnDef]="col.columnDef">
     <th mat-header-cell *matHeaderCellDef>{{ col.header }}</th>
 
@@ -38,10 +38,10 @@
   </ng-container>
   }
 
-  <tr mat-header-row *matHeaderRowDef="columnKeys"></tr>
-  <tr mat-row *matRowDef="let row; columns: columnKeys"></tr>
+  <tr mat-header-row *matHeaderRowDef="columnKeys()"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnKeys()"></tr>
 </table>
-@if(showPagination){
+@if(showPagination()){
 <mat-paginator
   [pageSizeOptions]="[5, 10, 20]"
   showFirstLastButtons

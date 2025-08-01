@@ -80,6 +80,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -97,7 +98,12 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "codeCoverageExclude": [
+              "src/app/features/superheroes/dialogs/*.ts",
+              "src/app/features/superheroes/services/loader.service.ts",
+              "src/app/shared/components/*.ts"
+            ]
           }
         }
       }

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';

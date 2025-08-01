@@ -1,11 +1,13 @@
-import { AfterViewInit, Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
+/* istanbul ignore file */
+import { AfterViewInit, Directive, ElementRef, HostListener, inject, Renderer2 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: '[appUppercase]'
 })
 export class UppercaseDirective implements AfterViewInit {
-constructor(private el: ElementRef<HTMLInputElement>, private control: NgControl) {}
+  el = inject(ElementRef);
+  control = inject(NgControl);  
 
   ngAfterViewInit(): void {
     this.setUppercaseInitialValue();

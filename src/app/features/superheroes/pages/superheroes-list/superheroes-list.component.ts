@@ -18,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   styleUrl: './superheroes-list.component.scss'
 })
 export class SuperheroesListComponent {
+  dialog = inject(MatDialog);
   service = inject(SuperheroeService);
   filter = signal('');
   heroes = computed(() => {
@@ -40,9 +41,6 @@ export class SuperheroesListComponent {
       ],
     },
   ];
-
-  constructor(private dialog: MatDialog) {
-  }
 
   delete(hero: Superheroe): void {
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {

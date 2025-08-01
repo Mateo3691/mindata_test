@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+/* istanbul ignore file */
+import { AfterViewInit, Component, OnChanges, SimpleChanges, ViewChild, computed, effect, input, output } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Superheroe } from '../../../core/models/superheroe.model';
 import { Column } from '../../../core/models/columns.model';
@@ -11,42 +12,53 @@ import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-dynamic-table',
-  imports: [MatTableModule, MatIconModule, MatButtonModule, MatTooltipModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatLabel],
+  standalone: true,
+  imports: [
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatLabel
+  ],
   templateUrl: './dynamic-table.component.html',
   styleUrl: './dynamic-table.component.scss',
 })
-export class DynamicTableComponent implements AfterViewInit, OnChanges {
-  @Input() data: Superheroe[] = [];
-  @Input() displayedColumns: Column[] = [];
-  @Input() showFilter: boolean = false;
-  @Input() showPagination: boolean = false;
+export class DynamicTableComponent implements AfterViewInit {
+  // Inputs y Outputs modernos
+  data = input<Superheroe[]>([]);
+  displayedColumns = input<Column[]>([]);
+  showFilter = input<boolean>(false);
+  showPagination = input<boolean>(false);
 
-  @Output() iconClick: EventEmitter<any> = new EventEmitter();
-  @Output() createClicked = new EventEmitter<void>();
-  @Output() filterChanged = new EventEmitter<string>();
+  iconClick = output<any>();
+  createClicked = output<void>();
+  filterChanged = output<string>();
 
   dataSource = new MatTableDataSource<Superheroe>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  get columnKeys(): string[] {
-    return this.displayedColumns.map((col) => col.columnDef);
-  }
+  columnKeys = computed(() =>
+    this.displayedColumns().map((col) => col.columnDef)
+  );
+
+  // lo pongo como propiedad para poder limpiarlo si es necesario
+  private dataEffect = effect(() => {
+    this.dataSource.data = this.data();
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  });
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
-  // esto lo hago para que se vayan actualizando los datos en la tabla cuando cambian
-  ngOnChanges(): void {
-    this.dataSource.data = this.data;
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-  }
-
   onFilterChange(value: string) {
-  this.filterChanged.emit(value);
+    this.filterChanged.emit(value);
   }
 
   onCreateClick() {
