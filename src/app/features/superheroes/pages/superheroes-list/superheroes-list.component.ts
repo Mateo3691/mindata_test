@@ -1,15 +1,15 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { DynamicTableComponent } from '../../../../shared/components/dynamic-table/dynamic-table.component';
-import { MatCardModule } from '@angular/material/card';
-import { Superheroe } from '../../../../core/models/superheroe.model';
-import { SuperheroeService } from '../../../../core/services/superheroe.service';
-import { CreateEditHeroDialogComponent } from '../../dialogs/create-edit-hero-dialog/create-edit-hero-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDeleteDialogComponent } from '../../dialogs/confirm-delete-dialog/confirm-delete-dialog.component';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Superheroe } from '../../../../core/models/superheroe.model';
+import { SuperheroeService } from '../../../../core/services/superheroe.service';
+import { DynamicTableComponent } from '../../../../shared/components/dynamic-table/dynamic-table.component';
+import { ConfirmDeleteDialogComponent } from '../../dialogs/confirm-delete-dialog/confirm-delete-dialog.component';
+import { CreateEditHeroDialogComponent } from '../../dialogs/create-edit-hero-dialog/create-edit-hero-dialog.component';
 
 @Component({
   selector: 'app-superheroes-list',
@@ -48,7 +48,6 @@ export class SuperheroesListComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result:', result);
       if (result === true) {
         this.service.delete(hero.id);
       }
@@ -56,8 +55,6 @@ export class SuperheroesListComponent {
   }
 
   onIconClick(event: { action: string; element: any }): void {
-    console.log('Acción:', event.action);
-    console.log('Elemento:', event.element);
     if (event.action === 'editar') {
       this.openDialogToEdit(event.element);
     } else if (event.action === 'eliminar') {
